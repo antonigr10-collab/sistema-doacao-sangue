@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar - SalveVidas</title>
+
+    <!-- CDN DO SUPABASE (Necessário caso o Controller utilize globalmente) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .login-container {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .login-header h1 {
+            margin: 0;
+            color: #ef4444;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .login-header p {
+            margin: 5px 0 0 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* FORMULÁRIOS */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #475569;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: #fff;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #ef4444;
+        }
+
+        /* BOTÃO DE SUBMIT */
+        .btn-submit {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #dc2626;
+        }
+
+        .btn-submit:disabled {
+            background: #fca5a5;
+            cursor: not-allowed;
+        }
+
+        /* LINKS ADICIONAIS */
+        .login-links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .login-links a {
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* RODAPÉ DO ADMINISTRADOR - Totalmente isolado para evitar travamento de cliques */
+        .admin-footer {
+            margin-top: 30px;
+            text-align: center;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            /* Garante que ficará por cima de qualquer elemento invisível */
+        }
+
+        .admin-footer a {
+            color: #94a3b8;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            display: inline-block;
+            /* Cria uma área de clique maior e robusta */
+            transition: color 0.2s;
+        }
+
+        .admin-footer a:hover {
+            color: #475569;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CONTAINER PRINCIPAL DO LOGIN -->
+    <div class="login-container">
+        <div class="login-header">
+            <a href="index.html" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 8px;">
+                <h1>SalveVidas</h1>
+            </a>
+            <p>Faça login para acessar sua área de doador</p>
+        </div>
+
+        <form id="form-login">
+            <div class="form-group">
+                <label for="email">E-mail Cadastrado</label>
+                <input type="email" id="email" class="form-control" placeholder="exemplo@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Sua Senha</label>
+                <input type="password" id="senha" class="form-control" placeholder="Digite sua senha" required>
+            </div>
+
+            <button type="submit" class="btn-submit">Entrar na Conta</button>
+        </form>
+
+        <div class="login-links">
+            Não tem uma conta? <a href="cadastro.html">Cadastre-se como Doador</a>
+        </div>
+    </div>
+
+    <!-- RODAPÉ DE ACESSO ADMINISTRATIVO RESTRITO -->
+    <div class="admin-footer">
+        <a href="admin.html">🔐 Acesso Administrativo</a>
+    </div>
+
+    <!-- Modal de alerta SalveVidas (inserir antes das scripts para garantir disponibilidade no DOM) -->
+    <div id="svl-alert-modal" class="svl-modal" aria-hidden="true" aria-labelledby="svl-alert-title"
+        aria-describedby="svl-alert-desc" role="dialog">
+        <div class="svl-modal__overlay" data-close="true"></div>
+        <div class="svl-modal__dialog" role="document" aria-live="polite">
+            <header class="svl-modal__header">
+                <h2 id="svl-alert-title">Atenção</h2>
+            </header>
+            <div class="svl-modal__content">
+                <p id="svl-alert-desc">Mensagem de alerta</p>
+            </div>
+            <footer class="svl-modal__footer">
+                <button type="button" id="svl-alert-ok" class="svl-btn svl-btn--primary">OK</button>
+            </footer>
+            <button type="button" class="svl-modal__close" aria-label="Fechar" data-close="true">&times;</button>
+        </div>
+    </div>
+
+    <!-- INJEÇÃO HIERÁRQUICA DO MVC -->
+    <script src="./js/env-loader.js"></script>
+    <script src="./js/models/DoadorModel.js"></script>
+    <script src="./js/controllers/DoadorController.js"></script>
+    <script src="./js/views/LoginView.js"></script>
+</body>
+
+</html>

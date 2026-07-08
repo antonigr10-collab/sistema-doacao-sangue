@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Doador - SalveVidas</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; color: #1e293b; padding: 20px; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* HEADER E NAVEGAÇÃO */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; }
+        h1 { margin: 0; color: #ef4444; font-size: 24px; display: flex; align-items: center; gap: 8px; }
+        .btn-logout { color: #64748b; font-weight: 500; text-decoration: none; font-size: 14px; transition: color 0.2s; cursor: pointer; background: none; border: none; }
+        .btn-logout:hover { color: #ef4444; }
+
+        /* LAYOUT PRINCIPAL */
+        .dashboard-layout { display: grid; grid-template-columns: 1fr; gap: 25px; }
+        @media (min-width: 992px) { .dashboard-layout { grid-template-columns: 1.5fr 1fr; } }
+        
+        /* CARDS GERAIS */
+        .card { background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom: 25px; }
+        .card-title { margin: 0 0 15px 0; font-size: 18px; color: #0f172a; display: flex; align-items: center; gap: 8px; }
+        .blood-badge { background: #ef4444; color: white; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 14px; }
+
+        /* FORMULÁRIO DE EDIÇÃO */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #475569; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; box-sizing: border-box; background: #fff; }
+        .form-control:disabled { background: #f1f5f9; cursor: not-allowed; }
+        .btn-submit { background: #22c55e; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s; }
+        .btn-submit:hover { background: #16a34a; }
+        .btn-toggle-edit { background: #3b82f6; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; transition: background 0.2s; }
+        .btn-toggle-edit:hover { background: #2563eb; }
+
+        /* GUIA INFORMATIVO (RECUPERADO) */
+        .guide-card { border-top: 5px solid #0284c7; }
+        .guide-section { margin-bottom: 20px; }
+        .guide-section h4 { margin: 0 0 10px 0; font-size: 15px; color: #0284c7; font-weight: 600; }
+        .guide-list { list-style: none; padding: 0; margin: 0; }
+        .guide-list li { position: relative; padding-left: 20px; margin-bottom: 8px; font-size: 14px; line-height: 1.5; color: #334155; }
+        .guide-list li::before { content: "•"; color: #0284c7; font-weight: bold; font-size: 18px; position: absolute; left: 5px; top: -2px; }
+
+        /* MODAL DE URGÊNCIA */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-container { background: #ffffff; width: 90%; max-width: 500px; border-radius: 16px; overflow: hidden; transform: scale(0.9); transition: transform 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-overlay.active .modal-container { transform: scale(1); }
+        .modal-header { background: #ef4444; color: white; padding: 20px; display: flex; align-items: center; gap: 12px; }
+        .modal-header h3 { margin: 0; font-size: 18px; font-weight: bold; }
+        .modal-body { padding: 24px; font-size: 15px; line-height: 1.6; color: #334155; }
+        .modal-footer { padding: 0 24px 24px 24px; display: flex; justify-content: flex-end; }
+        .btn-modal-action { background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; width: 100%; transition: background 0.2s ease; }
+        .btn-modal-action:hover { background: #dc2626; }
+    </style>
+</head>
+<body>
+
+    <div id="urgencia-modal-overlay" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <span style="font-size: 24px;">🚨</span>
+                <h3 id="urgencia-modal-titulo">Chamado de Emergência</h3>
+            </div>
+            <div class="modal-body">
+                <p id="urgencia-modal-texto">Carregando detalhes do alerta crítico regional...</p>
+            </div>
+            <div class="modal-footer">
+                <button id="urgencia-modal-btn" class="btn-modal-action">Entendi, quero doar! 🩸</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1><a href="index.html" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 8px;">❤️ SalveVidas</a> — Área do Voluntário</h1>
+            <a href="mural.html" class="btn-logout" id="btn-sair-painel">🚪 Sair do Painel</a>
+        </header>
+
+        <div class="dashboard-layout">
+            <div class="main-column">
+                
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 class="card-title" style="margin: 0;">👤 Seu Perfil Cadastral</h3>
+                        <button class="btn-toggle-edit" id="btn-alternar-edicao">✏️ Editar Cadastro</button>
+                    </div>
+                    <div id="perfil-doador">Carregando dados do voluntário...</div>
+                </div>
+
+                <div class="card" id="card-editar-cadastro" style="display: none; border-top: 4px solid #3b82f6;">
+                    <h3 class="card-title">📝 Atualizar Informações</h3>
+                    <form id="form-editar-perfil">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="edit-nome">Nome Completo</label>
+                                <input type="text" id="edit-nome" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-telefone">Telefone</label>
+                                <input type="text" id="edit-telefone" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="edit-estado">Estado (UF)</label>
+                                <select id="edit-estado" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-cidade">Cidade</label>
+                                <select id="edit-cidade" class="form-control" disabled required>
+                                    <option value="">Selecione o estado...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <button type="submit" class="btn-submit">💾 Salvar</button>
+                            <button type="button" class="btn-logout" id="btn-cancelar-edicao" style="background: #e2e8f0; padding: 10px 15px; border-radius: 6px; font-weight: bold; color: #475569;">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="card-compatibilidade"></div>
+            </div>
+
+            <div class="side-column">
+                <div class="card guide-card">
+                    <h3 class="card-title" style="color: #0284c7;">ℹ️ Guia do Doador</h3>
+                    <p style="font-size: 13px; color: #64748b; margin: 0 0 20px 0; line-height: 1.4;">
+                        Prepare-se para garantir um processo seguro no hemocentro.
+                    </p>
+
+                    <div class="guide-section">
+                        <h4>🪪 Documentos Obrigatórios</h4>
+                        <ul class="guide-list">
+                            <li><strong>Documento Oficial:</strong> RG, CNH ou Carteira de Trabalho.</li>
+                            <li><strong>Histórico:</strong> Carteirinha de Doador, se possuir.</li>
+                        </ul>
+                    </div>
+                    <hr style="border: 0; border-top: 1px dashed #e2e8f0; margin: 15px 0;">
+                    <div class="guide-section">
+                        <h4>🩺 Requisitos Básicos</h4>
+                        <ul class="guide-list">
+                            <li><strong>Alimentação:</strong> Bem alimentado (evite gordura).</li>
+                            <li><strong>Repouso:</strong> Ter dormido ao menos 6 horas.</li>
+                            <li><strong>Idade e Peso:</strong> 16 a 69 anos, acima de 50kg.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/env-loader.js"></script>
+    <script src="js/models/DoadorModel.js"></script>
+    <script src="js/controllers/DoadorController.js"></script>
+    <script src="js/views/PainelView.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const controller = new DoadorController();
+            const view = new PainelView(controller);
+            view.init();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastre-se como Voluntário - Salve Vidas</title>
+    <!-- Adicionada a CDN do Supabase aqui -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Estilos específicos da Triagem para preservar o style.css intacto */
+        .quiz-options {
+            display: flex;
+            gap: 25px;
+            margin: 10px 0 5px 0;
+        }
+        .quiz-radio {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            color: #334155;
+            cursor: pointer;
+            font-weight: normal;
+        }
+        .quiz-radio input[type="radio"] {
+            accent-color: #ef4444;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .alert-inapto {
+            background-color: #fef2f2;
+            border: 1px solid #fee2e2;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .alert-inapto h3 {
+            color: #991b1b;
+            margin: 0 0 12px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .alert-inapto p {
+            color: #7f1d1d;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .btn-outline:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        .hide { display: none !important; }
+    </style>
+</head>
+<body>
+    <div id="banner-lgpd" class="hide" style="position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b; color: #f8fafc; padding: 20px; z-index: 10000; box-shadow: 0 -4px 10px rgba(0,0,0,0.3); border-top: 3px solid #ef4444;">
+        <div class="content-container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <p style="margin: 0; font-size: 14px; max-width: 80%; line-height: 1.5;">
+                📢 <strong>Aviso de Privacidade (LGPD):</strong> Este site utiliza dados pessoais (como e-mail e telefone) exclusivamente para gerenciar seu perfil de doador e emitir alertas de saúde, armazenados de forma segura no seu próprio navegador. Ao continuar e navegar, você concorda com estes termos.
+            </p>
+            <button id="btn-aceitar-lgpd" class="btn" style="background: #22c55e; color: white; font-weight: bold; padding: 8px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px;">Aceitar e Continuar</button>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 8px;">❤️ SalveVidas</a>
+            <nav class="nav-links">
+                <a href="cadastro.html" class="active">Cadastrar</a>
+                <a href="login.html">Painel do Doador</a>
+                <a href="mural.html">Mural Público</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="content-container" style="margin-top: 30px;">
+        <section class="form-section">
+            
+            <!-- CONTÊINER 1: FORMULÁRIO DE TRIAGEM (Aparece Primeiro) -->
+            <div id="container-triagem">
+                <div class="section-header">
+                    <h2>Triagem Prévia de Aptidão</h2>
+                    <p>Responda às perguntas obrigatórias baseadas nas diretrizes oficiais para liberar seu acesso.</p>
+                </div>
+
+                <form id="form-triagem" class="app-form">
+                    <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
+                        <label style="font-weight: bold; color: #1e293b;">1. Você tem entre 16 e 69 anos de idade?</label>
+                        <div class="quiz-options">
+                            <label class="quiz-radio"><input type="radio" name="q1" value="sim" required> Sim</label>
+                            <label class="quiz-radio"><input type="radio" name="q1" value="nao"> Não</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
+                        <label style="font-weight: bold; color: #1e293b;">2. Seu peso corporal atual é superior a 50kg?</label>
+                        <div class="quiz-options">
+                            <label class="quiz-radio"><input type="radio" name="q2" value="sim" required> Sim</label>
+                            <label class="quiz-radio"><input type="radio" name="q2" value="nao"> Não</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
+                        <label style="font-weight: bold; color: #1e293b;">3. Encontra-se em bom estado de saúde e sem sintomas gripais recentes?</label>
+                        <div class="quiz-options">
+                            <label class="quiz-radio"><input type="radio" name="q3" value="sim" required> Sim</label>
+                            <label class="quiz-radio"><input type="radio" name="q3" value="nao"> Não</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px; font-weight: bold;">Verificar Aptidão</button>
+                </form>
+            </div>
+
+            <!-- CONTÊINER 2: ALERTA EDUCADO DE INAPTIDÃO (Invisível por padrão) -->
+            <div id="container-inapto" style="display: none;">
+                <div class="alert-inapto">
+                    <h3>Agradecemos imensamente o seu interesse!</h3>
+                    <p>Com base nos critérios de triagem técnica do Ministério da Saúde, você não atende aos requisitos mínimos obrigatórios para doação de sangue neste momento. Por este motivo, seu processo de registro foi suspenso por segurança clínica.</p>
+                    <button type="button" id="btn-refazer-triagem" class="btn-outline">Corrigir / Refazer Respostas</button>
+                </div>
+            </div>
+
+            <!-- CONTÊINER 3: FORMULÁRIO COMPLETO ORIGINAL (Fica invisível e aparece se passar) -->
+            <div id="container-cadastro-real" style="display: none;">
+                <div class="section-header">
+                    <h2>Seja um Doador Voluntário</h2>
+                    <p>Preencha os campos abaixo e ajude a salvar vidas na sua região.</p>
+                </div>
+
+                <div id="msg-cadastro" class="message-box hide"></div>
+
+                <form id="form-cadastro" class="app-form" novalidate>
+                    <div class="form-group">
+                        <label for="nome">Nome Completo</label>
+                        <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+                        <span class="error-text" id="err-nome"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group size-3">
+                            <label for="tipoSanguineo">Tipo Sanguíneo</label>
+                            <select id="tipoSanguineo" required>
+                                <option value="">Selecione...</option>
+                                <option value="A+">A+</option><option value="A-">A-</option>
+                                <option value="B+">B+</option><option value="B-">B-</option>
+                                <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                                <option value="O+">O+</option><option value="O-">O-</option>
+                            </select>
+                            <span class="error-text" id="err-tipoSanguineo"></span>
+                        </div>
+                        <div class="form-group size-7">
+                            <label for="telefone">Telefone / WhatsApp</label>
+                            <input type="tel" id="telefone" placeholder="(49) 99999-0000" maxlength="15" required>
+                            <span class="error-text" id="err-telefone"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-mail (Será seu usuário de login)</label>
+                        <input type="email" id="email" placeholder="nome@exemplo.com" required>
+                        <span class="error-text" id="err-email"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group size-5">
+                            <label for="senha">Senha de Acesso</label>
+                            <input type="password" id="senha" placeholder="Mínimo de 4 dígitos" required>
+                            <span class="error-text" id="err-senha"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group size-3">
+                            <label for="estado">Estado (UF) <span id="load-estado" style="display:none;">🔄</span></label>
+                            <select id="estado" required><option value="">Carregando...</option></select>
+                            <span class="error-text" id="err-estado"></span>
+                        </div>
+                        <div class="form-group size-7">
+                            <label for="cidade">Cidade <span id="load-cidade" style="display:none;">🔄</span></label>
+                            <select id="cidade" disabled required><option value="">Selecione o estado...</option></select>
+                            <span class="error-text" id="err-cidade"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 15px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-weight: normal; color: #334155; font-size: 14px;">
+                            <input type="checkbox" id="termo-lgpd" style="margin-top: 3px; width: 16px; height: 16px;">
+                            <span>Li e aceito os <strong>Termos de Privacidade</strong> e autorizo expressamente o uso dos meus dados informados para fins de contato e alertas urgentes de doação de sangue.</span>
+                        </label>
+                        <span class="error-text" id="err-termo-lgpd" style="display: block; margin-top: 5px;"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px; font-weight: bold;">Finalizar Meu Cadastro</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer style="margin-top: 40px; padding: 20px 0; border-top: 1px solid #e2e8f0; text-align: center; font-size: 14px; color: #64748b;">
+        <div class="content-container">
+            <span>&copy; 2026 SalveVidas — Em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/18).</span>
+        </div>
+    </footer>
+
+    <div id="cadastro-success-modal" class="cadastro-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="cadastro-sucesso-titulo">
+        <div class="cadastro-modal__overlay" data-close="true"></div>
+        <div class="cadastro-modal__dialog">
+            <header class="cadastro-modal__header">
+                <div class="cadastro-modal__icon">✅</div>
+                <h3 id="cadastro-sucesso-titulo">Cadastro realizado com sucesso!</h3>
+            </header>
+            <div class="cadastro-modal__body">
+                <p>Seu perfil de doador foi criado com sucesso. Agora você pode entrar no login e acompanhar as oportunidades de doação.</p>
+            </div>
+            <footer class="cadastro-modal__footer">
+                <button type="button" id="cadastro-modal-btn-ok" class="btn btn-primary">OK</button>
+            </footer>
+        </div>
+    </div>
+
+    <script src="./js/env-loader.js"></script>
+    <script src="./js/models/DoadorModel.js"></script>
+    <script src="./js/controllers/DoadorController.js"></script>
+    <script src="./js/views/CadastroView.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const controller = new window.DoadorController();
+            const view = new window.CadastroView(controller);
+            view.init();
+        });
+    </script>
+</body>
+</html>

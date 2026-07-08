@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento Administrativo - SalveVidas</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #0f172a; margin: 0; }
+        
+        /* SEÇÃO DE LOGIN */
+        #section-login { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
+        .login-card { background: white; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; max-width: 400px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+        .login-card h2 { margin: 0 0 20px 0; color: #ef4444; text-align: center; font-size: 24px; }
+        
+        /* SEÇÃO DO PAINEL PRINCIPAL */
+        #section-admin-panel { display: none; flex-direction: column; max-width: 1300px; margin: 0 auto; padding: 30px 20px; gap: 30px; box-sizing: border-box; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; }
+        .admin-header h1 { margin: 0; font-size: 24px; color: #1e293b; }
+        
+        /* LAYOUT EM MATRIZ DO DASHBOARD */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 25px; }
+        @media (min-width: 992px) { .dashboard-grid { grid-template-columns: 1fr 2fr; } }
+        
+        .panel-card { background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; height: fit-content; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01); }
+        .panel-card h3 { margin: 0 0 20px 0; font-size: 18px; color: #334155; display: flex; align-items: center; gap: 8px; }
+        
+        /* FORMULÁRIOS */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #475569; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; box-sizing: border-box; background: #fff; }
+        .form-control:disabled { background: #f1f5f9; cursor: not-allowed; }
+        
+        /* BOTÕES */
+        .btn-danger { background: #ef4444; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+        .btn-danger:hover { background: #dc2626; }
+        
+        /* MENSAGENS DE ALERTA DO LOGIN */
+        .message-box { padding: 12px; border-radius: 6px; font-size: 13px; font-weight: 500; margin-bottom: 15px; text-align: center; }
+        .message-box.error { background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; }
+        .hide { display: none; }
+        
+        /* GRÁFICO CONTAINER */
+        .chart-wrapper { height: 220px; position: relative; margin-top: 10px; }
+        
+        /* ESTILOS DAS TABELAS MURAIS DO USER */
+        .mural-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
+        .mural-table th { background: #f8fafc; padding: 12px; border-bottom: 2px solid #e2e8f0; color: #64748b; font-weight: 600; }
+        .mural-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #334155; vertical-align: middle; }
+        .blood-badge { background: #ef4444; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <section id="section-login">
+        <div class="login-card">
+            <h2>Acesso Restrito</h2>
+            <div id="msg-login" class="message-box error hide"></div>
+            <form id="form-login">
+                <div class="form-group">
+                    <label for="usuario">Identificador Administrativo</label>
+                    <input type="text" id="usuario" class="form-control" placeholder="Digite o usuário" required>
+                </div>
+                <div class="form-group">
+                    <label for="senha">Chave de Segurança</label>
+                    <input type="password" id="senha" class="form-control" placeholder="Digite a senha" required>
+                </div>
+                <button type="submit" class="btn-danger">Autenticar no Sistema</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="section-admin-panel">
+        <div class="admin-header">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <a href="index.html" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 20px;">❤️ SalveVidas</a>
+                <h1>Painel de Controle Administrativo</h1>
+            </div>
+            <a href="mural.html" style="color: #64748b; font-weight: 500; text-decoration: none; font-size: 14px;">🚪 Sair do Painel</a>
+        </div>
+
+        <div class="dashboard-grid">
+            <div style="display: flex; flex-direction: column; gap: 25px;">
+                <div class="panel-card">
+                    <h3>📊 Voluntários por Tipo Sanguíneo</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="graficoSangue"></canvas>
+                    </div>
+                </div>
+
+                <div class="panel-card">
+                    <h3>📢 Publicar Estado Crítico</h3>
+                    <form id="form-alerta">
+                        <div class="form-group">
+                            <label for="estado">Estado (UF)</label>
+                            <select id="estado" class="form-control" required>
+                                <option value="">Carregando estados...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cidade">Cidade Afetada</label>
+                            <select id="cidade" class="form-control" disabled required>
+                                <option value="">Selecione um estado primeiro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipoSanguineo">Grupo Sanguíneo em Falta</label>
+                            <select id="tipoSanguineo" class="form-control" required>
+                                <option value="">Selecione...</option>
+                                <option value="O-">O-</option>
+                                <option value="O+">O+</option>
+                                <option value="A-">A-</option>
+                                <option value="A+">A+</option>
+                                <option value="B-">B-</option>
+                                <option value="B+">B+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="AB+">AB+</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-danger">Disparar Alerta Regional</button>
+                    </form>
+                </div>
+
+                <div class="panel-card">
+                    <h3>📍 Alertas Ativos nas Cidades</h3>
+                    <div id="lista-alertas">
+                        </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 25px;">
+                <div class="panel-card">
+                    <h3>👥 Banco de Voluntários Registrados</h3>
+                    <div id="lista-gerenciar-doadores" style="overflow-x: auto;">
+                        </div>
+                </div>
+
+                <div class="panel-card">
+                    <h3>🩹 Chamados Emergenciais Ativos</h3>
+                    <div id="lista-gerenciar-pedidos" style="overflow-x: auto;">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="./js/env-loader.js"></script>
+    <script src="./js/models/DoadorModel.js"></script>
+    <script src="./js/controllers/DoadorController.js"></script>
+    <script src="./js/views/AdminView.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+          // O Model agora não precisa ser instanciado aqui separadamente porque 
+          // o seu DoadorController.js já faz isso internamente no constructor dele.
+          const controller = new DoadorController();
+          const view = new AdminView(controller);
+          view.init();
+      });
+    </script>
+</body>
+</html>

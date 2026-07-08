@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalveVidas - Conectando Doadores a Vidas</title>
+    <!-- Vincula diretamente o seu arquivo original da pasta css -->
+    <link rel="stylesheet" href="css/landing.css">
+</head>
+
+<body>
+
+    <!-- NAVEGAÇÃO SUPERIOR -->
+    <header class="landing-header">
+        <div class="landing-container">
+            <div class="nav-flex">
+                <a href="index.html" class="logo-area" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 8px;">
+                    <span class="logo-heart">❤️</span>
+                    <span class="logo-text">SalveVidas</span>
+                </a>
+                <nav class="landing-nav">
+                    <a href="mural.html" class="nav-link">Mural Público</a>
+                    <a href="login.html" class="nav-link nav-btn-secondary">Login do Doador</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- SEÇÃO HERO (COM EFEITO DE BRILHO) -->
+    <section class="hero-section">
+        <div class="glow-effect"></div>
+        <div class="landing-container">
+            <div class="hero-center">
+                <h1 class="hero-title">
+                    <span class="text-gradient">A tecnologia ligando doadores a vidas.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Uma plataforma automatizada em tempo real com cruzamento inteligente de dados regionais e total
+                    segurança jurídica para salvar quem mais precisa.
+                </p>
+                <div class="hero-cta-group">
+                    <!-- Mantido apenas o botão principal neon -->
+                    <a href="cadastro.html" class="btn-neon-primary">Começar como Doador</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO DE ESTOQUE SANGUÍNEO -->
+    <section class="stock-section" aria-labelledby="stock-title">
+        <div class="landing-container">
+            <div class="stock-panel">
+                <div class="stock-panel__header">
+                    <div>
+                        <p class="stock-panel__eyebrow">Monitoramento diário</p>
+                        <h2 id="stock-title">Estado Atual do Estoque de Sangue</h2>
+                    </div>
+                    <div class="stock-panel__legend" aria-label="Legenda do painel">
+                        <span><i class="legend-dot legend-dot--stable"></i>Estável</span>
+                        <span><i class="legend-dot legend-dot--critical"></i>Crítico</span>
+                    </div>
+                </div>
+
+                <div class="stock-list" role="list">
+                    <article class="stock-item" role="listitem">
+                        <div class="stock-item__meta">
+                            <h3>A+</h3>
+                            <span class="status status--stable">Estável</span>
+                        </div>
+                        <label class="sr-only" for="stock-a-positive">Nível de estoque do tipo A positivo</label>
+                        <div class="bar-track" aria-hidden="true">
+                            <span id="stock-a-positive" class="bar-fill bar-fill--stable" style="--fill: 82%"></span>
+                        </div>
+                        <p class="stock-item__value">82% disponível</p>
+                    </article>
+
+                    <article class="stock-item" role="listitem">
+                        <div class="stock-item__meta">
+                            <h3>A-</h3>
+                            <span class="status status--critical">Crítico</span>
+                        </div>
+                        <label class="sr-only" for="stock-a-negative">Nível de estoque do tipo A negativo</label>
+                        <div class="bar-track" aria-hidden="true">
+                            <span id="stock-a-negative" class="bar-fill bar-fill--critical" style="--fill: 18%"></span>
+                        </div>
+                        <p class="stock-item__value">18% disponível</p>
+                    </article>
+
+                    <article class="stock-item" role="listitem">
+                        <div class="stock-item__meta">
+                            <h3>B+</h3>
+                            <span class="status status--stable">Estável</span>
+                        </div>
+                        <label class="sr-only" for="stock-b-positive">Nível de estoque do tipo B positivo</label>
+                        <div class="bar-track" aria-hidden="true">
+                            <span id="stock-b-positive" class="bar-fill bar-fill--stable" style="--fill: 74%"></span>
+                        </div>
+                        <p class="stock-item__value">74% disponível</p>
+                    </article>
+
+                    <article class="stock-item" role="listitem">
+                        <div class="stock-item__meta">
+                            <h3>B-</h3>
+                            <span class="status status--critical">Crítico</span>
+                        </div>
+                        <label class="sr-only" for="stock-b-negative">Nível de estoque do tipo B negativo</label>
+                        <div class="bar-track" aria-hidden="true">
+                            <span id="stock-b-negative" class="bar-fill bar-fill--critical" style="--fill: 11%"></span>
+                        </div>
+                        <p class="stock-item__value">11% disponível</p>
+                    </article>
+
+                    <article class="stock-item" role="listitem">
+                        <div class="stock-item__meta">
+                            <h3>AB+</h3>
+                            <span class="status status--stable">Estável</span>
+                        </div>
+                        <label class="sr-only" for="stock-ab-positive">Nível de estoque do tipo AB positivo</label>
+                        <div class="bar-track" aria-hidden="true">
+                            <span id="stock-ab-positive" class="bar-fill bar-fill--stable" style="--fill: 64%"></span>
+                        </div>
+                        <p class="stock-item__value">64% disponível</p>
+                    </article>
+
+                    <article class="stock-item" role="listitem">
+                        <div class="stock-item__meta">
+                            <h3>AB-</h3>
+                            <span class="status status--critical">Crítico</span>
+                        </div>
+                        <label class="sr-only" for="stock-ab-negative">Nível de estoque do tipo AB negativo</label>
+                        <div class="bar-track" aria-hidden="true">
+                            <span id="stock-ab-negative" class="bar-fill bar-fill--critical" style="--fill: 9%"></span>
+                        </div>
+                        <p class="stock-item__value">9% disponível</p>
+                    </article>
+
+                    <article class="stock-item" role="listitem">
+                        <div class="stock-item__meta">
+                            <h3>O+</h3>
+                            <span class="status status--stable">Estável</span>
+                        </div>
+                        <label class="sr-only" for="stock-o-positive">Nível de estoque do tipo O positivo</label>
+                        <div class="bar-track" aria-hidden="true">
+                            <span id="stock-o-positive" class="bar-fill bar-fill--stable" style="--fill: 90%"></span>
+                        </div>
+                        <p class="stock-item__value">90% disponível</p>
+                    </article>
+
+                    <article class="stock-item" role="listitem">
+                        <div class="stock-item__meta">
+                            <h3>O-</h3>
+                            <span class="status status--critical">Crítico</span>
+                        </div>
+                        <label class="sr-only" for="stock-o-negative">Nível de estoque do tipo O negativo</label>
+                        <div class="bar-track" aria-hidden="true">
+                            <span id="stock-o-negative" class="bar-fill bar-fill--critical" style="--fill: 15%"></span>
+                        </div>
+                        <p class="stock-item__value">15% disponível</p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO: CALCULADORA DE PRÓXIMA DOAÇÃO -->
+    <section class="calculator-section" aria-labelledby="calculator-title">
+        <div class="landing-container">
+            <div class="calculator-card">
+                <div class="calculator-card__content">
+                    <p class="calculator-eyebrow">Planejamento seguro</p>
+                    <h2 id="calculator-title">Calculadora de Próxima Doação</h2>
+                    <p class="calculator-copy">Descubra a próxima data ideal para doar, com base no intervalo recomendado no Brasil.</p>
+                </div>
+
+                <form class="calculator-form" id="calculator-form" novalidate>
+                    <div class="field-group">
+                        <label for="genero">Gênero</label>
+                        <select id="genero" name="genero" required>
+                            <option value="">Selecione</option>
+                            <option value="masculino">Masculino</option>
+                            <option value="feminino">Feminino</option>
+                        </select>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="ultima-doacao">Data da Última Doação</label>
+                        <input type="date" id="ultima-doacao" name="ultimaDoacao" required>
+                    </div>
+
+                    <button type="submit" class="calculator-btn">Calcular</button>
+                </form>
+
+                <div class="calculator-result" id="calculator-result" aria-live="polite">
+                    <p>Preencha os dados acima para visualizar sua próxima janela de doação.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO DE RECURSOS (CARDS) -->
+    <section class="features-section">
+        <div class="landing-container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Cruzamento em Tempo Real</h3>
+                    <p>Notificações instantâneas enviadas direto aos voluntários compatíveis mais próximos.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>Segurança de Dados</h3>
+                    <p>Informações de contato e telefones totalmente blindados seguindo as diretrizes da LGPD.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">🚨</div>
+                    <h3>Alertas Críticos Municipais</h3>
+                    <p>Monitoramento centralizado para destacar hemocentros regionais em estado de emergência.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RODAPÉ DA PÁGINA -->
+    <footer class="landing-footer">
+        <div class="landing-container">
+            <div class="footer-flex">
+                <div class="footer-copy">
+                    &copy; 2026 SalveVidas. Todos os direitos reservados.
+                </div>
+                <a href="login.html" class="footer-admin-link">🔐 Acesso Administrativo</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const form = document.getElementById('calculator-form');
+        const resultBox = document.getElementById('calculator-result');
+
+        if (form && resultBox) {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const genero = document.getElementById('genero').value;
+                const ultimaDoacaoValue = document.getElementById('ultima-doacao').value;
+
+                if (!genero || !ultimaDoacaoValue) {
+                    resultBox.innerHTML = '<p class="calculator-error">Escolha seu gênero e informe a data da última doação.</p>';
+                    return;
+                }
+
+                const dataUltimaDoacao = new Date(`${ultimaDoacaoValue}T00:00:00`);
+                const mesesParaAdicionar = genero === 'masculino' ? 2 : 3;
+                const proximaData = new Date(dataUltimaDoacao);
+                proximaData.setMonth(proximaData.getMonth() + mesesParaAdicionar);
+
+                const hoje = new Date();
+                hoje.setHours(0, 0, 0, 0);
+                const diffMs = proximaData.getTime() - hoje.getTime();
+                const diffDias = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+                const opcaoTexto = genero === 'masculino' ? 'Homens' : 'Mulheres';
+                const dataFormatada = proximaData.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                });
+
+                resultBox.innerHTML = `
+                    <div class="result-pill">${opcaoTexto}: intervalo recomendado de ${mesesParaAdicionar} meses</div>
+                    <h3>Próxima doação estimada</h3>
+                    <p class="result-date">${dataFormatada}</p>
+                    <p class="result-days">${diffDias >= 0 ? `${diffDias} dias para a próxima doação` : 'Você já pode considerar a próxima janela de doação'}.</p>
+                `;
+            });
+        }
+    </script>
+
+</body>
+
+</html>

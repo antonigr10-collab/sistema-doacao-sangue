@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Doador - Salve Vidas</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 8px;">❤️ SalveVidas</a>
+            <nav class="nav-links">
+                <a href="cadastro.html">Cadastrar</a>
+                <a href="painel.html" class="active">Painel do Doador</a>
+                <a href="mural.html">Mural Público</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="content-container">
+        <div id="container-alerta"></div>
+
+        <section class="profile-section">
+            <div class="section-header">
+                <h2>Meu Perfil de Doador</h2>
+                <p>Consulte aqui suas informações cadastradas no sistema local.</p>
+            </div>
+
+            <div id="perfil-doador" class="profile-card">
+                <p class="no-data-msg">Nenhum doador localizado no navegador. Vá até a tela de <a href="cadastro.html">Cadastro</a> para criar seu perfil de teste.</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="./js/env-loader.js"></script>
+    <script src="./js/models/DoadorModel.js"></script>
+    <script src="./js/controllers/DoadorController.js"></script>
+    <script src="./js/views/PainelView.js"></script>
+    
+    <script>
+        // Inicialização limpa e integrada via escopo global do navegador
+        document.addEventListener('DOMContentLoaded', () => {
+            const controller = new window.DoadorController();
+            const view = new window.PainelView(controller);
+            view.init();
+        });
+    </script>
+</body>
+</html>

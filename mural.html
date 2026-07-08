@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mural de Doações - Salve Vidas</title>
+    
+    <!-- CDN DO SUPABASE OBRIGATÓRIA -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .btn-whatsapp-share {
+            background-color: #25d366;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.2s ease;
+        }
+        .btn-whatsapp-share:hover { background-color: #128c7e; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 8px;">❤️ SalveVidas</a>
+            <nav class="nav-links">
+                <a href="cadastro.html">Cadastrar</a>
+                <a href="login.html">Painel do Doador</a>
+                <a href="mural.html" class="active">Mural Público</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="content-container" style="margin-top: 30px; min-height: 75vh;">
+        <section style="background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
+            <div class="section-header" style="margin-bottom: 20px;">
+                <h2 style="font-size: 18px; color: #1e293b; margin: 0 0 5px 0;">📍 Voluntários em Prontidão</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="mural-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th>Doador</th><th>Grupo</th><th>Contato</th><th>Localidade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mural-doadores-corpo">
+                        <tr><td colspan="4">Carregando lista de voluntários...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section style="background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <div class="section-header" style="margin-bottom: 20px;">
+                <h2 style="font-size: 18px; color: #e11d48; margin: 0 0 5px 0;">🚨 Chamados Urgentes</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="mural-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th>Paciente</th><th>Grupo</th><th>Hospital</th><th>Contato</th><th>Local</th><th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mural-pedidos-corpo">
+                        <tr><td colspan="6">Carregando chamados...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="./js/env-loader.js"></script>
+    <script src="./js/models/DoadorModel.js"></script>
+    <script src="./js/controllers/DoadorController.js"></script>
+    <script src="./js/views/MuralView.js"></script>
+</body>
+</html>
